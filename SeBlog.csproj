@@ -171,11 +171,18 @@
         <Generator>TextTemplatingFileGenerator</Generator>
         <LastGenOutput>BuildTaskList.cs</LastGenOutput>
       </None>
+      <None Update="BuildTaskList.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>BuildTaskList.cs</LastGenOutput>
+      </None>
     </ItemGroup>
     <ItemGroup>
       <Compile Update="Posts\BuildTaskList.cs">
         <AutoGen>True</AutoGen>
         <DesignTime>True</DesignTime>
+        <DependentUpon>BuildTaskList.tt</DependentUpon>
+      </Compile>
+      <Compile Update="BuildTaskList.cs">
         <DependentUpon>BuildTaskList.tt</DependentUpon>
       </Compile>
     </ItemGroup>
