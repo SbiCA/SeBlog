@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SeBlog.Posts
+namespace SeBlog
 {
     public class Post
     {

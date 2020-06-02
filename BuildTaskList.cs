@@ -1,5 +1,5 @@
 ﻿
-namespace SeBlog.Posts
+namespace SeBlog
 {
     using System.Collections.Generic;
 
@@ -7,7 +7,7 @@ namespace SeBlog.Posts
     {
         public static Dictionary<string, string> TitleToFile = new Dictionary<string,string>
         {
-            { "posts/2020/06/01/Writing my first post and a blog engine","/posts/27.05.2020-First-post.md"},
+            { "posts/2020/06/01/Writing my first post and a blog engine","/posts/27.05.2020-First-post.md>"},
         };
     }
 }

@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
-using SeBlog.Posts;
+using Microsoft.Extensions.Logging;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
@@ -16,10 +16,12 @@ namespace SeBlog
 {
     public class PostDirectory
     {
-        public PostDirectory(HttpClient httpClient, ILocalStorageService localStorage)
+        private readonly ILogger<PostDirectory> _logger;
+        public PostDirectory(HttpClient httpClient, ILocalStorageService localStorage, ILogger<PostDirectory> logger)
         {
             HttpClient = httpClient;
             LocalStorage = localStorage;
+            _logger = logger;
         }
 
         private List<Post> Posts { get; } = new List<Post>();
@@ -28,7 +30,6 @@ namespace SeBlog
 
         public async Task<List<Post>> GetPosts()
         {
-            // TODO use local storage https://github.com/Blazored/LocalStorage
             if (Posts.Count > 0) return Posts;
             await InitializePosts();
 
@@ -38,33 +39,25 @@ namespace SeBlog
         private async Task InitializePosts()
         {
             foreach (var (postTitle, fileUrl) in PostLists.TitleToFile)
+            {
                 Posts.Add(await LoadPostByTitle(postTitle, fileUrl));
+            }
         }
 
         private async Task<Post> LoadPostByTitle(string postKey, string fileUrl)
         {
             if (await LocalStorage.ContainKeyAsync(postKey))
             {
-                Console.WriteLine($"Loading cached post {postKey}");
+                _logger.LogInformation("Loading cached post {postKey}", postKey);
                 var post = await LocalStorage.GetItemAsync<Post>(postKey);
                 return post;
             }
             else
             {
-                Console.WriteLine($"Downloading post {postKey}");
+               _logger.LogInformation("Downloading post {postKey}", postKey);
                 var content = await GetContentFromUrl(fileUrl);
-                // TODO yaml front parse
-                // var yamlFront = content.Split(Environment.NewLine).Skip(1).Take(3).ToArray();
-                // var post = new Post
-                // {
-                //     // TODO store and cache locally
-                //     Content = content,
-                //     Date = DateTime.UtcNow,
-                //     Title = yamlFront[0],
-                //     ShortDescription = yamlFront[2]
-                // };
                 var post = ParseYamlFront(content);
-                Console.WriteLine($"Parsed content {JsonSerializer.Serialize(post)}");
+                _logger.LogDebug("Parsed content {markdown}",JsonSerializer.Serialize(post));
                 await LocalStorage.SetItemAsync(postKey, post);
                 return post;
             }
@@ -108,7 +101,7 @@ namespace SeBlog
 
         public async Task<Post?> ByKey(string key)
         {
-            Console.WriteLine($"trying to get {key}");
+            _logger.LogInformation("trying to get post {postKey}", key);
             if (!PostLists.TitleToFile.ContainsKey(key)) return null;
 
             return await LoadPostByTitle(key, PostLists.TitleToFile[key]);

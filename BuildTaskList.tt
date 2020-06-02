@@ -1,0 +1,58 @@
+<#@ template language="C#v3.5" #>
+<#@ import namespace="System.IO" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Globalization" #>
+<#
+    const string path = "wwwroot/posts";
+    var postPaths = Directory.GetFiles(path, "*.md", SearchOption.AllDirectories);
+
+    
+    var titleToFile = new Dictionary<string, string>();
+    foreach (var postPath in postPaths)
+    {
+        Console.WriteLine(postPath);
+        var pathInWWWRoot = postPath.Replace("wwwroot", "");
+        var fileContent = File.ReadAllText(postPath);
+        var postKey = ParseYamlFront(fileContent);
+        
+        titleToFile.Add(postKey, pathInWWWRoot);
+    }
+
+    static string ParseYamlFront(string markdown)
+    {
+        // ---
+        //     title: Writing my first post and a blog engine
+        //                                        published: "06/01/2020 00:00:00"
+        //                                                   description: How I've built a "lightweight" blog engine with blazor wasm and how to host it on github pages.
+        //                                                       ---
+        var frontTags = markdown.Split('\n').Skip(1).Take(3).ToArray();
+        var title = frontTags.First(tag => tag.StartsWith("title:")).Replace("title:", "").Trim();
+        var publishedString = frontTags.First(tag => tag.StartsWith("published:")).Replace("published:", "").Replace("\"", "").Trim();
+        Console.WriteLine($"Date {publishedString}");
+        var publishedDate = DateTime.ParseExact(publishedString,"G", CultureInfo.InvariantCulture);
+        return $"posts/{publishedDate.Year}/{publishedDate.Month:00}/{publishedDate.Day:00}/{title}";
+    }
+
+    
+#>
+
+namespace SeBlog
+{
+    using System.Collections.Generic;
+
+    public static class PostLists
+    {
+        public static Dictionary<string, string> TitleToFile = new Dictionary<string,string>
+        {
+<# // generate all posts
+    foreach (var kvp in titleToFile)
+    {
+#>
+            { "<#= kvp.Key #>","<#= kvp.Value #>>"},
+<#
+    } #>
+        };
+    }
+}
