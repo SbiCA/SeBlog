@@ -1,5 +1,39 @@
-﻿<h3>Component1</h3>
+﻿@using SeBlog.Posts
+@inject IJSRuntime JsRuntime
+<h1>@Blog.Title</h1>
+<h4 class="text-muted">published @Blog.Published.ToString("Y")</h4>
+<br/>
+
+<MarkdownRenderer Markdown="@Blog.Content"></MarkdownRenderer>
+
 
 @code {
+
+    [Parameter]
+    public Post Blog { get; set; }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+    // flowchart:{
+    //     useMaxWidth:true,
+    //     htmlLabels:true,
+    //     curve:'cardinal',
+    // },
+    // init mermaid diagrams
+    // TODO include it in dist
+        await JsRuntime.InvokeVoidAsync("mermaid.initialize", new
+        {
+            theme = "neutral",
+            securityLevel = "strict",
+            flowchart = new
+            {
+                useMaxWidth = true,
+                htmlLabels = true,
+                curve = "cardinal"
+            }
+        });
+        await JsRuntime.InvokeVoidAsync("mermaid.init");
+    }
 
 }

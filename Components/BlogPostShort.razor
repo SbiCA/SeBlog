@@ -1,12 +1,25 @@
-﻿
-@using SeBlog.Posts
+﻿@using SeBlog.Posts
+@inject NavigationManager NavigationManager
 
- 
-<h1>@Blog.Title</h1>
-<p>@Blog.Date.ToString("Y")</p>
-<MarkdownRenderer Markdown="@Blog.Content"></MarkdownRenderer>
+
+<div class="card w-100 shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title">@Blog.Title</h5> <h6 class="card-subtitle mb-2 text-muted">Published @Blog.Published.ToString("Y")</h6>
+        <p class="card-text">@Blog.Description  <button @onclick="GotoBlog" class="btn btn-link">read more</button></p>
+    </div>
+</div>
+
 @code {
 
     [Parameter]
     public Post Blog { get; set; }
+
+}
+
+@code
+{
+    public void GotoBlog()
+    {
+        NavigationManager.NavigateTo(Blog.Key);
+    }
 }

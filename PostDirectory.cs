@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using SeBlog.Posts;
+using YamlDotNet.Core;
+using YamlDotNet.Core.Events;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.Converters;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace SeBlog
 {
@@ -32,31 +37,64 @@ namespace SeBlog
 
         private async Task InitializePosts()
         {
-            foreach (var postTitle in PostLists.List)
+            foreach (var (postTitle, fileUrl) in PostLists.TitleToFile)
+                Posts.Add(await LoadPostByTitle(postTitle, fileUrl));
+        }
+
+        private async Task<Post> LoadPostByTitle(string postKey, string fileUrl)
+        {
+            if (await LocalStorage.ContainKeyAsync(postKey))
             {
-                if (await LocalStorage.ContainKeyAsync(postTitle))
-                {
-                    Console.WriteLine($"Loading cached post {postTitle}");
-                    var post = await LocalStorage.GetItemAsync<Post>(postTitle);
-                    Posts.Add(post);
-                }
-                else
-                {
-                    Console.WriteLine($"Downloading post {postTitle}");
-                    var content = await GetContentFromUrl(postTitle);
-                    // TODO yaml parse
-                    var yamlFront = content.Split(Environment.NewLine).Skip(1).Take(3).ToArray();
-                    var post = new Post
-                    {
-                        // TODO store and cache locally
-                        Content = content,
-                        Date = DateTime.UtcNow,
-                        Title = yamlFront[0],
-                        ShortDescription = yamlFront[2]
-                    };
-                    await LocalStorage.SetItemAsync(postTitle, post);
-                    Posts.Add(post);
-                }
+                Console.WriteLine($"Loading cached post {postKey}");
+                var post = await LocalStorage.GetItemAsync<Post>(postKey);
+                return post;
+            }
+            else
+            {
+                Console.WriteLine($"Downloading post {postKey}");
+                var content = await GetContentFromUrl(fileUrl);
+                // TODO yaml front parse
+                // var yamlFront = content.Split(Environment.NewLine).Skip(1).Take(3).ToArray();
+                // var post = new Post
+                // {
+                //     // TODO store and cache locally
+                //     Content = content,
+                //     Date = DateTime.UtcNow,
+                //     Title = yamlFront[0],
+                //     ShortDescription = yamlFront[2]
+                // };
+                var post = ParseYamlFront(content);
+                Console.WriteLine($"Parsed content {JsonSerializer.Serialize(post)}");
+                await LocalStorage.SetItemAsync(postKey, post);
+                return post;
+            }
+        }
+
+        private static Post ParseYamlFront(string markdown)
+        {
+            // Thanks https://markheath.net/post/markdown-html-yaml-front-matter
+            var yamlDeserializer = new DeserializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .WithTypeConverter(new DateTimeConverter())
+                .Build();
+
+            try
+            {
+                Post? post = null;
+                using var input = new StringReader(markdown);
+                var parser = new Parser(input);
+                parser.Consume<StreamStart>();
+                parser.Consume<DocumentStart>();
+                post = yamlDeserializer.Deserialize<Post>(parser);
+                parser.Consume<DocumentEnd>();
+                // assign completed markdown
+                post.Content = markdown;
+                return post;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
             }
         }
 
@@ -68,18 +106,12 @@ namespace SeBlog
                 : httpResponse.ReasonPhrase;
         }
 
-        public async Task<Post> ByTitle(string title)
+        public async Task<Post?> ByKey(string key)
         {
-            if (Posts.Count == 0)
-            {
-                await InitializePosts();
-            }
-            // var escapedTitle = Uri.EscapeUriString(title);
-            // Console.WriteLine($"escaped : {escapedTitle}");
-            Console.WriteLine($"{JsonSerializer.Serialize(Posts)}");
-            var firstOrDefault = Posts.FirstOrDefault(p => p.Title == title);
-            Console.WriteLine($"post found {JsonSerializer.Serialize(firstOrDefault)}");
-            return firstOrDefault;
+            Console.WriteLine($"trying to get {key}");
+            if (!PostLists.TitleToFile.ContainsKey(key)) return null;
+
+            return await LoadPostByTitle(key, PostLists.TitleToFile[key]);
         }
     }
 }

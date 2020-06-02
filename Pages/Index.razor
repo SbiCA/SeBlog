@@ -1,7 +1,27 @@
 ﻿@page "/"
+@using SeBlog.Posts
+@inject PostDirectory Directory
 
-<h1>Hello, world!</h1>
+<div class="container-fluid">
+    @foreach (var post in Posts)
+    {
+        <div class="markdown-view">
+            <div class="row">
+                <BlogPostShort Blog="@post"></BlogPostShort>
+            </div>
+        </div>
+    }
+</div>
 
-Welcome to your new app.
+@code
+{
+    public List<Post> Posts { get; set; } = new List<Post>();
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    protected override async Task OnInitializedAsync()
+    {
+        Posts = await Directory.GetPosts();
+        StateHasChanged();
+    }
+
+
+}

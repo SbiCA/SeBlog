@@ -1,2 +1,45 @@
-@page "/post/{title}
+@page "/posts/{year:int}/{month:int}/{day:int}/{title}"
+@using SeBlog.Posts
+@inject PostDirectory Directory
+@inject NavigationManager NavigationManager
 
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="markdown-view">
+            @if (Blog == null)
+            {
+                <br/>
+                <h4>I don't seem to recall having written this post ... sorry 🥺</h4>
+            }
+            else
+            {
+                <BlogPost Blog="@Blog"></BlogPost>
+            }
+        </div>
+    </div>
+
+</div>
+
+@code
+{
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public int Year { get; set; }
+
+    [Parameter]
+    public int Month { get; set; }
+
+    [Parameter]
+    public int Day { get; set; }
+
+    public Post Blog { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Blog = await Directory.ByKey(Post.GetKey(Year, Month, Day, Title));
+    }
+
+}

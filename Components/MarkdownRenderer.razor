@@ -1,22 +1,36 @@
 ﻿@using Markdig
-
 @if (Markdown == null)
 {
     <span>Loading...</span>
 }
 else
 {
-    @((MarkupString)BuildHtmlFromMarkdown(Markdown))
+    @((MarkupString) BuildHtmlFromMarkdown(Markdown))
 }
 
 @functions {
 
-[Parameter]
-public string Markdown { get; set; }
-    
-private string BuildHtmlFromMarkdown(string value) => Markdig.Markdown.ToHtml(
-    markdown: value,
-    pipeline:  new MarkdownPipelineBuilder().UseAdvancedExtensions().Build()
-    );
+
+    [Parameter]
+    public string Markdown { get; set; }
+
+    private string BuildHtmlFromMarkdown(string value)
+    {
+        Console.WriteLine($"value: {value}");
+        var html = Markdig.Markdown.ToHtml(
+            value,
+            new MarkdownPipelineBuilder()
+                .UseAdvancedExtensions()
+                .UseEmojiAndSmiley()
+    // .UseSyntaxHighlighting() // either this 
+                .UseDiagrams() // or this ...
+                .UseCustomContainers()
+    //
+                .UseYamlFrontMatter()
+                .Build()
+            );
+        Console.WriteLine($"html got called {html}");
+        return html;
+    }
 
 }
