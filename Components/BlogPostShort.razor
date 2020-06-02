@@ -1,0 +1,12 @@
+﻿
+@using SeBlog.Posts
+
+ 
+<h1>@Blog.Title</h1>
+<p>@Blog.Date.ToString("Y")</p>
+<MarkdownRenderer Markdown="@Blog.Content"></MarkdownRenderer>
+@code {
+
+    [Parameter]
+    public Post Blog { get; set; }
+}
