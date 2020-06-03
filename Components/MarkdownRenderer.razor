@@ -1,4 +1,6 @@
 ﻿@using Markdig
+@using Microsoft.Extensions.Logging
+@inject ILogger<MarkdownRenderer> Logger
 @if (Markdown == null)
 {
     <span>Loading...</span>
@@ -16,20 +18,20 @@ else
 
     private string BuildHtmlFromMarkdown(string value)
     {
-        Console.WriteLine($"value: {value}");
+        Logger.LogDebug("Rendering {markdown}", value);
         var html = Markdig.Markdown.ToHtml(
             value,
             new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 .UseEmojiAndSmiley()
-    // .UseSyntaxHighlighting() // either this 
+                // .UseSyntaxHighlighting() // either this 
                 .UseDiagrams() // or this ...
                 .UseCustomContainers()
-    //
                 .UseYamlFrontMatter()
                 .Build()
             );
-        Console.WriteLine($"html got called {html}");
+        
+        Logger.LogDebug("Rendered {html}", html);
         return html;
     }
 
