@@ -15,8 +15,6 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.0" PrivateAssets="all" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.0" PrivateAssets="all" />
-<!--        <PackageReference Include="Microsoft.Build.Framework" Version="16.5.0" />-->
-<!--        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.5.0" />-->
         <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />
         <PackageReference Include="YamlDotNet" Version="8.1.2" />
     </ItemGroup>

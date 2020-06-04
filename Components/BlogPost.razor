@@ -5,6 +5,8 @@
 
 <MarkdownRenderer Markdown="@Blog.Content"></MarkdownRenderer>
 
+<br/>
+<div id="disqus_thread"></div>
 
 @code {
 
@@ -14,13 +16,6 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-    // flowchart:{
-    //     useMaxWidth:true,
-    //     htmlLabels:true,
-    //     curve:'cardinal',
-    // },
-    // init mermaid diagrams
-    // TODO include it in dist
         await JsRuntime.InvokeVoidAsync("mermaid.initialize", new
         {
             theme = "neutral",
