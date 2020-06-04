@@ -7,20 +7,17 @@
 <#
     const string path = "wwwroot/posts";
     var postPaths = Directory.GetFiles(path, "*.md", SearchOption.AllDirectories);
-
-    
     var titleToFile = new Dictionary<string, string>();
     foreach (var postPath in postPaths)
     {
         Console.WriteLine(postPath);
-        var pathInWWWRoot = postPath.Replace("wwwroot", "");
-        var fileContent = File.ReadAllText(postPath);
-        var postKey = ParseYamlFront(fileContent);
-        
-        titleToFile.Add(postKey, pathInWWWRoot);
+        var pathInWwwRoot = postPath.Replace("wwwroot", "");
+        var postMarkdownContent = File.ReadAllText(postPath);
+        var postKey = GetPostKeyFromYamlFront(postMarkdownContent);
+        titleToFile.Add(postKey, pathInWwwRoot);
     }
 
-    static string ParseYamlFront(string markdown)
+    static string GetPostKeyFromYamlFront(string markdown)
     {
         var frontTags = markdown.Split('\n').Skip(1).Take(3).ToArray();
         var title = frontTags.First(tag => tag.StartsWith("title:")).Replace("title:", "").Trim();
@@ -29,8 +26,6 @@
         var publishedDate = DateTime.ParseExact(publishedString,"G", CultureInfo.InvariantCulture);
         return $"posts/{publishedDate.Year}/{publishedDate.Month:00}/{publishedDate.Day:00}/{title}";
     }
-
-    
 #>
 
 namespace SeBlog

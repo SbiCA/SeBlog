@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -30,15 +31,17 @@ namespace SeBlog
 
         public async Task<List<Post>> GetPosts()
         {
-            if (Posts.Count > 0) return Posts;
+            if (Posts.Count > 0) return Posts.ToList();
             await InitializePosts();
 
-            return Posts;
+            return Posts.ToList();
         }
 
         private async Task InitializePosts()
         {
-            foreach (var (postTitle, fileUrl) in PostLists.TitleToFile)
+            // checkout https://developer.github.com/v3/repos/contents/#custom-media-types with strategy to replace it
+            var orderedPosts = PostLists.TitleToFile.OrderByDescending(title => title.Key);
+            foreach (var (postTitle, fileUrl) in orderedPosts)
             {
                 Posts.Add(await LoadPostByTitle(postTitle, fileUrl));
             }
