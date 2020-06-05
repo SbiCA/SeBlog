@@ -1,6 +1,7 @@
 @page "/posts/{year:int}/{month:int}/{day:int}/{title}"
 @inject PostDirectory Directory
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
 
 <div class="container-fluid">
 
@@ -43,6 +44,7 @@
     protected override async Task OnInitializedAsync()
     {
         Blog = await Directory.ByKey(Post.GetKey(Year, Month, Day, Title));
+        await JsRuntime.InvokeVoidAsync("setupDisqus");
     }
 
 }
