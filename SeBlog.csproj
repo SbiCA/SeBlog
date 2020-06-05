@@ -160,6 +160,10 @@
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </Content>
+      <Content Update="wwwroot\img\puff.svg">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
     </ItemGroup>
     <ItemGroup>
       <None Update="Posts\27.05.2020-First-post.md">
@@ -183,8 +187,5 @@
       <Compile Update="BuildTaskList.cs">
         <DependentUpon>BuildTaskList.tt</DependentUpon>
       </Compile>
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="wwwroot\img" />
     </ItemGroup>
 </Project>
