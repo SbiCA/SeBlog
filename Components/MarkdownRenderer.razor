@@ -1,5 +1,5 @@
-﻿@using Markdig
-@using Microsoft.Extensions.Logging
+﻿@using Microsoft.Extensions.Logging
+@using Markdig
 @inject ILogger<MarkdownRenderer> Logger
 @if (Markdown == null)
 {
@@ -24,13 +24,11 @@ else
             new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 .UseEmojiAndSmiley()
-                // .UseSyntaxHighlighting() // either this 
-                .UseDiagrams() // or this ...
                 .UseCustomContainers()
                 .UseYamlFrontMatter()
                 .Build()
             );
-        
+
         Logger.LogDebug("Rendered {html}", html);
         return html;
     }

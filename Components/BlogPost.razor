@@ -16,6 +16,12 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        await RenderMermaidDiagrams();
+        await RenderSyntaxHighlighting();
+    }
+
+    private async Task RenderMermaidDiagrams()
+    {
         await JsRuntime.InvokeVoidAsync("mermaid.initialize", new
         {
             theme = "neutral",
@@ -27,7 +33,15 @@
                 curve = "cardinal"
             }
         });
+
+
         await JsRuntime.InvokeVoidAsync("mermaid.init");
+    }
+
+    private async Task RenderSyntaxHighlighting()
+    {
+        // syntax highlighting https://prismjs.com/extending.html#api
+        await JsRuntime.InvokeVoidAsync("Prism.highlightAll");
     }
 
 }

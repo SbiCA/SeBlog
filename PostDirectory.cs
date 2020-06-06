@@ -18,6 +18,7 @@ namespace SeBlog
     public class PostDirectory
     {
         private readonly ILogger<PostDirectory> _logger;
+
         public PostDirectory(HttpClient httpClient, ILocalStorageService localStorage, ILogger<PostDirectory> logger)
         {
             HttpClient = httpClient;
@@ -41,10 +42,7 @@ namespace SeBlog
         {
             // checkout https://developer.github.com/v3/repos/contents/#custom-media-types with strategy to replace it
             var orderedPosts = PostLists.TitleToFile.OrderByDescending(title => title.Key);
-            foreach (var (postTitle, fileUrl) in orderedPosts)
-            {
-                Posts.Add(await LoadPostByTitle(postTitle, fileUrl));
-            }
+            foreach (var (postTitle, fileUrl) in orderedPosts) Posts.Add(await LoadPostByTitle(postTitle, fileUrl));
         }
 
         private async Task<Post> LoadPostByTitle(string postKey, string fileUrl)
@@ -57,10 +55,10 @@ namespace SeBlog
             }
             else
             {
-               _logger.LogInformation("Downloading post {postKey}", postKey);
+                _logger.LogInformation("Downloading post {postKey}", postKey);
                 var content = await GetContentFromUrl(fileUrl);
                 var post = ParseYamlFront(content);
-                _logger.LogDebug("Parsed content {markdown}",JsonSerializer.Serialize(post));
+                _logger.LogDebug("Parsed content {markdown}", JsonSerializer.Serialize(post));
                 await LocalStorage.SetItemAsync(postKey, post);
                 return post;
             }

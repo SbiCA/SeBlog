@@ -16,7 +16,7 @@ namespace SeBlog
             builder.RootComponents.Add<App>("app");
 
             builder.Logging.SetMinimumLevel(LogLevel.Information);
-            
+
             builder.Services.AddTransient(sp => new HttpClient
                 {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
 
