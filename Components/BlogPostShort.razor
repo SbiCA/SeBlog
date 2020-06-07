@@ -1,12 +1,17 @@
 ﻿@inject NavigationManager NavigationManager
 
 
-<div class="card w-100 shadow-sm">
-    <div class="card-body">
+<div class="card w-100 shadow-sm" style="border-radius: 20px;">
+    <div class="card-body" style="margin-left: 10px;">
         <h5 class="card-title">@Blog.Title</h5> <h6 class="card-subtitle mb-2 text-muted">Published @Blog.Published.ToString("Y")</h6>
-        <p class="card-text">
-            @Blog.Description <button @onclick="GotoBlog" class="btn btn-link">read more</button>
-        </p>
+        <div class="row card-text">
+            <div class="col-auto">
+                @Blog.Description
+            </div>
+            <div class="col-auto">
+                <button @onclick="GotoBlog" class="btn btn-link" style="padding-left: 0;">read more</button>
+            </div>
+        </div>
     </div>
 </div>
 
