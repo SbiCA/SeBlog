@@ -1,13 +1,11 @@
 ﻿@page "/"
 @inject PostDirectory Directory
 
-<div class="container-fluid">
+<div class="container-fluid markdown-view">
     @foreach (var post in Posts)
     {
-        <div class="markdown-view">
-            <div class="row">
-                <BlogPostShort Blog="@post"></BlogPostShort>
-            </div>
+        <div class="row">
+            <BlogPostShort Blog="@post"></BlogPostShort>
         </div>
     }
 </div>
