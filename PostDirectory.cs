@@ -47,21 +47,32 @@ namespace SeBlog
 
         private async Task<Post> LoadPostByTitle(string postKey, string fileUrl)
         {
+#if DEBUG
+            // disable client side caching while developing/writing
+            return await DownloadPost(postKey, fileUrl);
+            
+#elif !DEBUG
+
             if (await LocalStorage.ContainKeyAsync(postKey))
             {
                 _logger.LogInformation("Loading cached post {postKey}", postKey);
                 var post = await LocalStorage.GetItemAsync<Post>(postKey);
                 return post;
             }
-            else
-            {
-                _logger.LogInformation("Downloading post {postKey}", postKey);
-                var content = await GetContentFromUrl(fileUrl);
-                var post = ParseYamlFront(content);
-                _logger.LogDebug("Parsed content {markdown}", JsonSerializer.Serialize(post));
-                await LocalStorage.SetItemAsync(postKey, post);
-                return post;
-            }
+
+            return await DownloadPost(postKey, fileUrl);
+#endif
+
+        }
+
+        private async Task<Post> DownloadPost(string postKey, string fileUrl)
+        {
+            _logger.LogInformation("Downloading post {postKey}", postKey);
+            var content = await GetContentFromUrl(fileUrl);
+            var post = ParseYamlFront(content);
+            _logger.LogDebug("Parsed content {markdown}", JsonSerializer.Serialize(post));
+            await LocalStorage.SetItemAsync(postKey, post);
+            return post;
         }
 
         private static Post ParseYamlFront(string markdown)

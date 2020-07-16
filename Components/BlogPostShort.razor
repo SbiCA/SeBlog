@@ -2,14 +2,23 @@
 
 
 <div class="card w-100 shadow-sm" style="border-radius: 20px; margin-top: 20px;">
+
     <div class="card-body" style="margin-left: 10px;">
-        <h5 class="card-title">@Blog.Title</h5> <h6 class="card-subtitle mb-2 text-muted">Published @Blog.Published.ToString("Y")</h6>
-        <div class="row card-text">
-            <div class="col-auto">
-                @Blog.Description
+        <div class="row">
+
+            <div class="col-sm-11" style="max-width: calc(100% - 40px);">
+                <h5 class="card-title">@Blog.Title</h5>
+                <div class="row card-text">
+                    <div class="col-auto">
+                        @Blog.Description
+                    </div>
+                    <div class="col-auto">
+                        <button @onclick="GotoBlog" class="btn btn-link" style="padding-left: 0;">read more</button>
+                    </div>
+                </div>
             </div>
-            <div class="col-auto">
-                <button @onclick="GotoBlog" class="btn btn-link" style="padding-left: 0;">read more</button>
+            <div style="min-width: 20px; max-width: 30px;" >
+                <p class="card-subtitle mb-2 text-muted" style="margin-top: 10px;-ms-writing-mode:tb-rl; writing-mode: vertical-rl; transform:rotate(180deg); vertical-align: bottom">@Blog.Published.ToString("Y")</p>
             </div>
         </div>
     </div>
