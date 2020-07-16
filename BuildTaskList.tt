@@ -4,6 +4,8 @@
 <#@ import namespace="System.Globalization" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
+<#@ assembly name="$(TargetDir)SeBlog.dll" #>
+
 <#
     const string path = "wwwroot/posts";
     var postPaths = Directory.GetFiles(path, "*.md", SearchOption.AllDirectories);
@@ -25,9 +27,8 @@
             frontTags.First(tag => tag.StartsWith("published:")).Replace("published:", "").Replace("\"", "").Trim();
         Console.WriteLine($"Date {publishedString}");
         var publishedDate = DateTime.ParseExact(publishedString, "G", CultureInfo.InvariantCulture);
-        return $"posts/{publishedDate.Year}/{publishedDate.Month:00}/{publishedDate.Day:00}/{title}";
+        return $"posts/{publishedDate.Year}/{publishedDate.Month:00}/{publishedDate.Day:00}/{title.GenerateSlug()}";
     }
-
 #>
 
 namespace SeBlog
