@@ -38,8 +38,8 @@ namespace SeBlog
             str = Regex.Replace(str, @"\s", "-"); // hyphens   
             return str;
         }
- 
-        public static string RemoveDiacritics(this string text)
+
+        private static string RemoveDiacritics(this string text)
         {
             var s = new string(text.Normalize(NormalizationForm.FormD)
                 .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)

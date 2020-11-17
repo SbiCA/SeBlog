@@ -106,9 +106,9 @@ namespace SeBlog
         private async Task<string> GetContentFromUrl(string path)
         {
             var httpResponse = await HttpClient.GetAsync(path);
-            return httpResponse.IsSuccessStatusCode
+            return (httpResponse.IsSuccessStatusCode
                 ? await httpResponse.Content.ReadAsStringAsync()
-                : httpResponse.ReasonPhrase;
+                : httpResponse.ReasonPhrase)!;
         }
 
         public async Task<Post?> ByKey(string key)
