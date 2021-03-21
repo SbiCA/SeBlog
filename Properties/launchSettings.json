@@ -1,17 +1,12 @@
 {
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:42585",
-      "sslPort": 44306
-    }
-  },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
+
+    "Watch": {
+      "commandName": "Executable",
+      "executablePath": "dotnet",
+      "workingDirectory": "$(ProjectDir)",
+      "commandLineArgs": "watch run",
       "launchBrowser": true,
-      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -19,6 +14,7 @@
     "SeBlog": {
       "commandName": "Project",
       "launchBrowser": true,
+      "executablePath": "dotnet",
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
